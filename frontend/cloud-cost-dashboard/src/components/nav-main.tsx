@@ -1,31 +1,28 @@
-import { type LucideIcon } from "lucide-react"
-import { useNavigate } from "react-router-dom";
+import { type LucideIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "../components/ui/sidebar"
+} from '../components/ui/sidebar';
 
 export function NavMain({
   items,
 }: {
   items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-  }[]
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+  }[];
 }) {
   const navigate = useNavigate();
   return (
     <SidebarGroup>
-      <SidebarGroupContent className="flex flex-col gap-2">
+      <SidebarGroupContent className='flex flex-col gap-2'>
         <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            
-            
-          </SidebarMenuItem>
+          <SidebarMenuItem className='flex items-center gap-2'></SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
           {items.map((item) => (
@@ -39,5 +36,5 @@ export function NavMain({
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-  )
+  );
 }

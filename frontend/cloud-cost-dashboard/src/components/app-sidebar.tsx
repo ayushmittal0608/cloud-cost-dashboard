@@ -1,31 +1,27 @@
-import * as React from "react"
-import {Link} from "react-router-dom";
+import * as React from 'react';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-  
-} from "../components/ui/select"
+  SelectValue,
+} from '../components/ui/select';
 import {
   ServerIcon,
   BarChartIcon,
   CameraIcon,
   PieChartIcon,
   FileCodeIcon,
-
   FileTextIcon,
   FolderIcon,
   LayoutDashboardIcon,
   ListIcon,
-
   UsersIcon,
-} from "lucide-react"
+} from 'lucide-react';
 
-
-import { NavMain } from "../components/nav-main"
-import { NavUser } from "../components/nav-user"
+import { NavUser } from '../components/nav-user';
 import {
   Sidebar,
   SidebarContent,
@@ -34,118 +30,129 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "../components/ui/sidebar"
+} from '../components/ui/sidebar';
 
 const data = {
   user: {
-    name: "mittalayush2003@gmail.com",
-    email: "mittalayush2003@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: 'mittalayush2003@gmail.com',
+    email: 'mittalayush2003@gmail.com',
+    avatar: '/avatars/shadcn.jpg',
   },
   navMain: [
     {
-      title: "Home",
-      url: "/",
+      title: 'Home',
+      url: '/',
       icon: LayoutDashboardIcon,
     },
     {
-      title: "Cost by Account",
-      url: "/account",
+      title: 'Cost by Account',
+      url: '/account',
       icon: ListIcon,
     },
     {
-      title: "Cost Explorer",
-      url: "/cost",
+      title: 'Cost Explorer',
+      url: '/cost',
       icon: BarChartIcon,
     },
     {
-      title: "Cost Optimisation",
-      url: "/cost-optimisation",
+      title: 'Cost Optimisation',
+      url: '/cost-optimisation',
       icon: PieChartIcon,
     },
     {
-      title: "Anomaly Detection",
-      url: "/anomaly",
+      title: 'Anomaly Detection',
+      url: '/anomaly',
       icon: FolderIcon,
     },
     {
-      title: "Recommendations",
-      url: "/recommendations",
+      title: 'Recommendations',
+      url: '/recommendations',
       icon: UsersIcon,
     },
   ],
   navClouds: [
     {
-      title: "Capture",
+      title: 'Capture',
       icon: CameraIcon,
       isActive: true,
-      url: "#",
+      url: '#',
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: 'Active Proposals',
+          url: '#',
         },
         {
-          title: "Archived",
-          url: "#",
+          title: 'Archived',
+          url: '#',
         },
       ],
     },
     {
-      title: "Proposal",
+      title: 'Proposal',
       icon: FileTextIcon,
-      url: "#",
+      url: '#',
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: 'Active Proposals',
+          url: '#',
         },
         {
-          title: "Archived",
-          url: "#",
+          title: 'Archived',
+          url: '#',
         },
       ],
     },
     {
-      title: "Prompts",
+      title: 'Prompts',
       icon: FileCodeIcon,
-      url: "#",
+      url: '#',
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: 'Active Proposals',
+          url: '#',
         },
         {
-          title: "Archived",
-          url: "#",
+          title: 'Archived',
+          url: '#',
         },
       ],
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const navigate = useNavigate();
+  const cloudOptions: Record<string, string> = {
+    aws: 'AWS',
+    azure: 'Azure',
+    master: 'Master',
+  };
+  const currentProviderKey =
+    Object.keys(cloudOptions).find((opt) => location.pathname.includes(opt)) || 'aws';
+  const currentProvider = cloudOptions[currentProviderKey]; // Converts key to display name
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible='offcanvas' {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
-              <Link to="#">
-                <ServerIcon className="h-5 w-5" />
-                <span className="text-base font-semibold">
-                  <Select>
-                    <SelectTrigger className="w-[300px] h-[50px] p-2 m-2">
-                <SelectValue placeholder="AWS" />
-              </SelectTrigger>
+            <SidebarMenuButton asChild className='data-[slot=sidebar-menu-button]:!p-1.5'>
+              <Link to='#'>
+                <ServerIcon className='h-5 w-5' />
+                <span className='text-base font-semibold'>
+                  <Select
+                    value={currentProviderKey}
+                    onValueChange={(value) => {
+                      navigate(`/${value}`);
+                    }}
+                  >
+                    <SelectTrigger className='w-[300px] h-[50px] p-2 m-2'>
+                      <SelectValue placeholder={currentProvider} />
+                    </SelectTrigger>
                     <SelectContent>
-                <SelectItem value="AWS">AWS</SelectItem>
-                <SelectItem value="Azure">Azure</SelectItem>
-                <SelectItem value="Combine">Combine</SelectItem>
-              </SelectContent>
+                      <SelectItem value='aws'>AWS</SelectItem>
+                      <SelectItem value='azure'>Azure</SelectItem>
+                      <SelectItem value='master'>Master</SelectItem>
+                    </SelectContent>
                   </Select>
                 </span>
               </Link>
@@ -154,11 +161,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <SidebarMenu>
+          {data.navMain.map((item) => (
+            <SidebarMenuItem key={item.url}>
+              <SidebarMenuButton onClick={() => navigate(`/${currentProviderKey}${item.url}`)}>
+                {item.title}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
