@@ -163,7 +163,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
   {
     accessorKey: 'header',
-    header: 'Header',
+    header: 'Services',
     cell: ({ row }) => {
       return <TableCellViewer item={row.original} />;
     },
@@ -171,7 +171,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
   {
     accessorKey: 'type',
-    header: 'Section Type',
+    header: 'Cost',
     cell: ({ row }) => (
       <div className='w-32'>
         <Badge variant='outline' className='px-1.5 text-muted-foreground'>
@@ -323,7 +323,9 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   );
 }
 
-export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }) {
+export function DataTable({ data: initialData, loading }: { data: z.infer<typeof schema>[],
+  loading: boolean
+ }) {
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -480,20 +482,26 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                 ))}
               </TableHeader>
               <TableBody className='**:data-[slot=table-cell]:first:w-8'>
-                {table.getRowModel().rows?.length ? (
-                  <SortableContext items={dataIds} strategy={verticalListSortingStrategy}>
-                    {table.getRowModel().rows.map((row) => (
-                      <DraggableRow key={row.id} row={row} />
-                    ))}
-                  </SortableContext>
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className='h-24 text-center'>
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className='h-24 text-center'>
+                    Loading data...
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows?.length ? (
+                <SortableContext items={dataIds} strategy={verticalListSortingStrategy}>
+                  {table.getRowModel().rows.map((row) => (
+                    <DraggableRow key={row.id} row={row} />
+                  ))}
+                </SortableContext>
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className='h-24 text-center'>
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
             </Table>
           </DndContext>
         </div>
@@ -675,7 +683,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           )}
           <form className='flex flex-col gap-4'>
             <div className='flex flex-col gap-3'>
-              <Label htmlFor='header'>Header</Label>
+              <Label htmlFor='header'>Services</Label>
               <Input id='header' defaultValue={item.header} />
             </div>
             <div className='grid grid-cols-2 gap-4'>
